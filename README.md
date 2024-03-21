@@ -15,6 +15,9 @@ tqdm==4.66.1
 argparse
 ```
 
+## Dataset Download
+[Datasets Here at GoogleDrive](https://drive.google.com/drive/folders/1-rKI4CAQq144Deca-f4o1R5YR-d-xjht?usp=sharing)
+
 ## Usage Example
 ```python
 python main.py --device cuda:0 --dataset dblp --model_type gcn --train_ratio 0.6 --test_ratio 0.2 --learnCoef "our*lbl" --lbls 0 1 2 3
