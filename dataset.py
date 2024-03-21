@@ -133,11 +133,11 @@ class Dataset:
         elif name == "grab":
             # edge_index, x, lbl = readGrabData()
             edge_index = torch.load(
-                "/data/syf/workspace/Rethinking-Anomaly-Detection/GrabEdge.pt"
+                "./GrabEdge.pt"
             )
-            x = torch.load("/data/syf/workspace/Rethinking-Anomaly-Detection/GrabX.pt")
+            x = torch.load("./GrabX.pt")
             with open(
-                "/data/syf/workspace/Rethinking-Anomaly-Detection/GrabLbl.pkl", "rb"
+                "./GrabLbl.pkl", "rb"
             ) as file:
                 lbl = pickle.load(file)
             graph = dgl.graph(
@@ -149,7 +149,7 @@ class Dataset:
             graph.ndata["feature"] = x
             # dataset=
         elif name == "dblp":
-            path = "/data/syf/Datasets/GrabMultiAnomaly/data/dblp/"
+            path = "./dblp/"
             labels = np.genfromtxt(
                 path + "labels.txt", dtype=np.dtype(float), delimiter=","
             )
@@ -175,8 +175,8 @@ class Dataset:
             graph.ndata["feature"] = x
             if "label" not in graph.ndata:
                 graph.ndata["label"] = lbl[0]
-        elif name in ["delve", "yelp", "blogcatalog", "youtube", "flickr"]:
-            path = "/data/syf/Datasets/alldata/" + name + "/"
+        elif name in ["delve", "blogcatalog"]:
+            path = "./" + name + "/"
             edge_index = torch.load(path + "edge_index.pt")
             graph = dgl.graph(
                 (edge_index[0], edge_index[1]),
@@ -188,7 +188,7 @@ class Dataset:
                 print("No feature!")
             if name == "yelp":
                 ys = [-1] * x.size(0)
-                with open("/data/syf/Datasets/alldata/yelp/class_map.json") as f:
+                with open("./yelp/class_map.json") as f:
                     class_map = json.load(f)
                     for key, item in class_map.items():
                         ys[int(key)] = item
@@ -199,19 +199,6 @@ class Dataset:
             graph.ndata["feature"] = x
             if "label" not in graph.ndata:
                 graph.ndata["label"] = lbl[0]
-        elif name == "delveM":
-            labels = sp.load_npz(
-                "/data/syf/delve_multi2/delve_multi2_matrices/label.npz"
-            ).toarray()
-            graph = nx.read_edgelist(
-                "/data/syf/delve_multi2/delve_multi2.edgelist",
-                delimiter="\t",
-            )
-            features = torch.FloatTensor(
-                sp.load_npz(
-                    "/data/syf/delve_multi2/delve_multi2_matrices/lsi_ngram.npz"
-                ).toarray()
-            )
             
         else:
             print("no such dataset")

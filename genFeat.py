@@ -11,8 +11,8 @@ from readGrab import readGrabData
 import torch.nn as nn
 from dataset import _add_undirected_graph_positional_embedding
 
-for name in ["delve", "yelp", "blogcatalog", "youtube", "flickr"]:
-    path = "/data/syf/Datasets/alldata/" + name + "/"
+for name in ["delve", "blogcatalog"]:
+    path = "./" + name + "/"
     edge_index = torch.load(path + "edge_index.pt")
     graph = dgl.graph(
         (edge_index[0], edge_index[1]),
