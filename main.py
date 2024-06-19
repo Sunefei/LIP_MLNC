@@ -395,7 +395,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--resdir",
         type=str,
-        default="/data/syf/workspace/Rethinking-Anomaly-Detection/res/",
+        default="./res/",
     )
     parser.add_argument(
         "--dataset",
@@ -406,7 +406,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--embdir",
         type=str,
-        default="/data/syf/workspace/Rethinking-Anomaly-Detection/emb/",
+        default="./emb/",
     )
     parser.add_argument(
         "--model_type",
@@ -416,7 +416,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--moddir",
         type=str,
-        default="/data/syf/workspace/Rethinking-Anomaly-Detection/mdls/",
+        default="./mdls/",
     )
     parser.add_argument("--train_ratio", type=float, default=0.2, help="Training ratio")
     parser.add_argument("--test_ratio", type=float, default=0.6, help="Training ratio")
@@ -436,7 +436,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--coocPath",
         type=str,
-        default="/data/syf/workspace/GrabMultiLabel/cooc_dblp.pt",
+        default="./data/cooc_dblp.pt",
     )
 
     args = parser.parse_args()
@@ -451,8 +451,8 @@ if __name__ == "__main__":
     in_feats = graph.ndata["feature"].shape[1]
     num_classes = 2
 
-    # coocPage = torch.load("/data/syf/workspace/GrabMultiLabel/ourPgRank.pt")
-    path = "/data/syf/workspace/GrabMultiLabel/"
+    # coocPage = torch.load("./data/ourPgRank.pt")
+    path = "./data/"
     if args.learnCoef in ["cooc", "our*lbl"]:
         coocPage = np.load(path + dataset_name + "_PRcooc.npy")
         indexes = args.lbls
