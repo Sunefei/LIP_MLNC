@@ -57,7 +57,7 @@ python main_lip.py --device cuda:0 --dataset dblp --model_type gcn --train_ratio
 ```
 
 ## Note:
-You can also check the up-to-date version of the repository at [yifeiGit](https://github.com/Sunefei/LIP_MLNC).
+You can also check the up-to-date version of the repository at [yifeiGit](https://github.com/Sunefei/).
 
 ## Acknowledgement:
 Thanks to Paper "[Multi-label Node Classification On Graph-structured Data](https://github.com/Tianqi-py/MLGNC)" for providing the valuable multi-label data, and special thanks to its authors for the support and assistance in using the data.
