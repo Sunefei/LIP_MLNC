@@ -3,20 +3,6 @@
 ## Label Influence Propagation (LIP)
 This is the code for the ICLR 2025 paper: ["Multi-Label Node Classification on Graphs with Label Influence Propagation"](https://openreview.net/forum?id=3X3LuwzZrl&referrer=%5BAuthor%20Console%5D(%2Fgroup%3Fid%3DICLR.cc%2F2025%2FConference%2FAuthors%23your-submissions)).
 
-## Citation
-You can cite our paper by following bibtex:
-```
-@inproceedings{
-    sun2025mlnc,
-    title={Multi-Label Node Classification with Label Influence Propagation},
-    author={Yifei Sun, Zemin Liu, Bryan Hooi, Yang Yang, Rizal Fathony, Jia Chen, Bingsheng He},
-    booktitle={International Conference on Learning Representations},
-    year={2025}
-}
-```
-
-Feel free to contact [yifeisun@zju.edu.cn](mailto:yifeisun@zju.edu.cn) if you have any questions.
-
 
 ## Abstract
 Graphs are a complex and versatile data structure used across various domains, with possibly multi-label nodes playing a particularly crucial role. Examples include proteins in PPI networks with multiple functions and users in social or e-commerce networks exhibiting diverse interests. Tackling multi-label node classification (MLNC) on graphs has led to the development of various approaches. Some methods leverage graph neural networks (GNNs) to exploit label co-occurrence correlations, while others incorporate label embeddings to capture label proximity. However, these approaches fail to account for the intricate influences between labels in non-Euclidean graph data.
@@ -59,7 +45,7 @@ argparse
 ```
 
 ## Usage:
-- Decompress the mlncData.tar.gz file. `tar -xzvf mlncData.tar.gz` Prepare the datasets and splits.
+- Download and decompress the files in `./mlncData/` and `./PR/` folder. For example: `tar -xzvf mlncData.tar.gz`. Prepare the datasets and splits.
 
 <!-- - Hyper-parameter settings are put into the `configs/` folder. -->
 
@@ -76,3 +62,16 @@ You can also check the up-to-date version of the repository at [yifeiGit](https:
 ## Acknowledgement:
 Thanks to Paper "[Multi-label Node Classification On Graph-structured Data](https://github.com/Tianqi-py/MLGNC)" for providing the valuable multi-label data, and special thanks to its authors for the support and assistance in using the data.
 
+## Citation
+You can cite our paper by following bibtex:
+```
+@inproceedings{
+    sun2025mlnc,
+    title={Multi-Label Node Classification with Label Influence Propagation},
+    author={Yifei Sun, Zemin Liu, Bryan Hooi, Yang Yang, Rizal Fathony, Jia Chen, Bingsheng He},
+    booktitle={International Conference on Learning Representations},
+    year={2025}
+}
+```
+
+Feel free to contact [yifeisun@zju.edu.cn](mailto:yifeisun@zju.edu.cn) if you have any questions.
