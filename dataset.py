@@ -5,7 +5,6 @@ from dgl.data import FraudYelpDataset, FraudAmazonDataset
 from dgl.data.utils import load_graphs, save_graphs
 import numpy as np
 import torch
-from readGrab import readGrabData
 
 import torch.nn as nn
 
@@ -21,6 +20,7 @@ import torch.nn.functional as F
 from dgl.data.tu import TUDataset
 from scipy.sparse import linalg
 import networkx as nx
+from torch_geometric.data import Data
 
 
 def eigen_decomposision(n, k, laplacian, hidden_size, retry):
@@ -54,7 +54,8 @@ def _add_undirected_graph_positional_embedding(g, hidden_size, retry=10):
     # Recall that the eignvectors of normalized laplacian of a line graph are cos/sin functions.
     # See section 2.4 of http://www.cs.yale.edu/homes/spielman/561/2009/lect02-09.pdf
     n = g.number_of_nodes()
-    adj = g.adjacency_matrix_scipy(transpose=False, return_edge_ids=False).astype(float)
+    adj = g.adjacency_matrix_scipy(
+        transpose=False, return_edge_ids=False).astype(float)
     norm = sparse.diags(
         dgl.backend.asnumpy(g.in_degrees()).clip(1) ** -0.5, dtype=float
     )
@@ -76,80 +77,8 @@ class Dataset:
     ):
         self.name = name
         graph = None
-        if name == "tfinance":
-            graph, label_dict = load_graphs("dataset/tfinance")
-            graph = graph[0]
-            graph.ndata["label"] = graph.ndata["label"].argmax(1)
-
-            if anomaly_std:
-                graph, label_dict = load_graphs("dataset/tfinance")
-                graph = graph[0]
-                feat = graph.ndata["feature"].numpy()
-                anomaly_id = graph.ndata["label"][:, 1].nonzero().squeeze(1)
-                feat = (feat - np.average(feat, 0)) / np.std(feat, 0)
-                feat[anomaly_id] = anomaly_std * feat[anomaly_id]
-                graph.ndata["feature"] = torch.tensor(feat)
-                graph.ndata["label"] = graph.ndata["label"].argmax(1)
-
-            if anomaly_alpha:
-                graph, label_dict = load_graphs("dataset/tfinance")
-                graph = graph[0]
-                feat = graph.ndata["feature"].numpy()
-                anomaly_id = list(graph.ndata["label"][:, 1].nonzero().squeeze(1))
-                normal_id = list(graph.ndata["label"][:, 0].nonzero().squeeze(1))
-                label = graph.ndata["label"].argmax(1)
-                diff = anomaly_alpha * len(label) - len(anomaly_id)
-                import random
-
-                new_id = random.sample(normal_id, int(diff))
-                # new_id = random.sample(anomaly_id, int(diff))
-                for idx in new_id:
-                    aid = random.choice(anomaly_id)
-                    # aid = random.choice(normal_id)
-                    feat[idx] = feat[aid]
-                    label[idx] = 1  # 0
-            graph.ndata["label"] = graph.ndata["label"].long().squeeze(-1)
-        elif name == "tsocial":
-            graph, label_dict = load_graphs("dataset/tsocial")
-            graph = graph[0]
-        # elif name == "yelp":
-        #     dataset = FraudYelpDataset()
-        #     graph = dataset[0]
-        #     if homo:
-        #         graph = dgl.to_homogeneous(
-        #             dataset[0],
-        #             ndata=["feature", "label", "train_mask", "val_mask", "test_mask"],
-        #         )
-        #         graph = dgl.add_self_loop(graph)
-        elif name == "amazon":
-            dataset = FraudAmazonDataset()
-            graph = dataset[0]
-            if homo:
-                graph = dgl.to_homogeneous(
-                    dataset[0],
-                    ndata=["feature", "label", "train_mask", "val_mask", "test_mask"],
-                )
-                graph = dgl.add_self_loop(graph)
-        elif name == "grab":
-            # edge_index, x, lbl = readGrabData()
-            edge_index = torch.load(
-                "./GrabEdge.pt"
-            )
-            x = torch.load("./GrabX.pt")
-            with open(
-                "./GrabLbl.pkl", "rb"
-            ) as file:
-                lbl = pickle.load(file)
-            graph = dgl.graph(
-                (edge_index[0], edge_index[1]),
-                # ndata=["feature", "label", "train_mask", "val_mask", "test_mask"],
-            )
-            if "label" not in graph.ndata:
-                graph.ndata["label"] = lbl[0]
-            graph.ndata["feature"] = x
-            # dataset=
-        elif name == "dblp":
-            path = "./dblp/"
+        if name == "dblp":
+            path = "/data/syf/LIP_MLNC/mlncData/dblp/"
             labels = np.genfromtxt(
                 path + "labels.txt", dtype=np.dtype(float), delimiter=","
             )
@@ -163,7 +92,8 @@ class Dataset:
                 np.genfromtxt(os.path.join(path, "dblp.edgelist"))
             ).long()
             edge_list_other_half = torch.hstack(
-                (edge_list[:, 1].reshape(-1, 1), edge_list[:, 0].reshape(-1, 1))
+                (edge_list[:, 1].reshape(-1, 1),
+                 edge_list[:, 0].reshape(-1, 1))
             )
             edge_index = torch.transpose(edge_list, 0, 1)
             edge_index_other_half = torch.transpose(edge_list_other_half, 0, 1)
@@ -176,7 +106,7 @@ class Dataset:
             if "label" not in graph.ndata:
                 graph.ndata["label"] = lbl[0]
         elif name in ["delve", "blogcatalog"]:
-            path = "./" + name + "/"
+            path = "/data/syf/LIP_MLNC/mlncData/" + name + "/"
             edge_index = torch.load(path + "edge_index.pt")
             graph = dgl.graph(
                 (edge_index[0], edge_index[1]),
@@ -188,7 +118,7 @@ class Dataset:
                 print("No feature!")
             if name == "yelp":
                 ys = [-1] * x.size(0)
-                with open("./yelp/class_map.json") as f:
+                with open("/data/syf/LIP_MLNC/yelp/class_map.json") as f:
                     class_map = json.load(f)
                     for key, item in class_map.items():
                         ys[int(key)] = item
@@ -199,7 +129,50 @@ class Dataset:
             graph.ndata["feature"] = x
             if "label" not in graph.ndata:
                 graph.ndata["label"] = lbl[0]
-            
+        elif name in ['pcg', 'HumLoc', 'EukLoc']:
+            print('Loading dataset ' + name + '.csv...')
+            if name == 'pcg':
+                path = "/data/syf/LIP_MLNC/mlncData/pcg_removed_isolated_nodes/"
+                edges = torch.tensor(np.genfromtxt(os.path.join(path, "edges_undir.csv"),
+                                                   dtype=np.dtype(float), delimiter=','))
+                edge_index = torch.transpose(edges, 0, 1).long()
+            elif name == 'EukLoc':
+                path = "/data/syf/LIP_MLNC/mlncData/EukaryoteGo/"
+                edge_list = torch.tensor(np.genfromtxt(os.path.join(path, "edge_list.csv"),
+                                                       skip_header=1, dtype=np.dtype(float), delimiter=','))[:, :2].long()
+                edge_list_other_half = torch.hstack(
+                    (edge_list[:, 1].reshape(-1, 1), edge_list[:, 0].reshape(-1, 1)))
+                edge_index = torch.transpose(edge_list, 0, 1)
+                edge_index_other_half = torch.transpose(
+                    edge_list_other_half, 0, 1)
+                edge_index = torch.hstack((edge_index, edge_index_other_half))
+
+            elif name == 'HumLoc':
+                path = "/data/syf/LIP_MLNC/mlncData/HumanGo/"
+                edge_list = torch.tensor(np.genfromtxt(os.path.join(path, "edge_list.csv"),
+                                                       skip_header=1, dtype=np.dtype(float), delimiter=','))[:, :2].long()
+                edge_list_other_half = torch.hstack(
+                    (edge_list[:, 1].reshape(-1, 1), edge_list[:, 0].reshape(-1, 1)))
+                edge_index = torch.transpose(edge_list, 0, 1)
+                edge_index_other_half = torch.transpose(
+                    edge_list_other_half, 0, 1)
+                edge_index = torch.hstack((edge_index, edge_index_other_half))
+
+            labels = np.genfromtxt(os.path.join(path, "labels.csv"),
+                                   dtype=np.dtype(float), delimiter=',')
+            lbl = torch.tensor(labels).float().t()
+            x = torch.tensor(np.genfromtxt(os.path.join(path, "features.csv"),
+                                           dtype=np.dtype(float), delimiter=',')).float()
+
+            graph = dgl.graph(
+                (edge_index[0], edge_index[1]),
+                num_nodes=x.shape[0]
+                # ndata=["feature", "label", "train_mask", "val_mask", "test_mask"],
+            )
+            graph.ndata["feature"] = x
+            if "label" not in graph.ndata:
+                graph.ndata["label"] = lbl[0]
+
         else:
             print("no such dataset")
             exit(1)
@@ -209,3 +182,35 @@ class Dataset:
         print(graph)
         self.labels = lbl
         self.graph = graph
+
+
+def load_mask(data_name, tt, num_samples):
+    if data_name in ['dblp']:
+        file_path = os.path.join(
+            "/data/syf/LIP_MLNC/mlncData/dblp/dblp_0.6", 'split_{}.pt'.format(tt))
+    elif data_name in ['blogcatalog']:
+        file_path = os.path.join(
+            "/data/syf/LIP_MLNC/mlncData/blogcatalog_0.6", 'split_{}.pt'.format(tt))
+    elif data_name in ['pcg']:
+        file_path = os.path.join(
+            "/data/syf/LIP_MLNC/mlncData/pcg_removed_isolated_nodes_0.6", 'split_{}.pt'.format(tt))
+    elif data_name in ['HumLoc']:
+        file_path = os.path.join(
+            '/data/syf/LIP_MLNC/mlncData/HumanGo/split.pt')
+    elif data_name in ['EukLoc']:
+        file_path = os.path.join(
+            '/data/syf/LIP_MLNC/mlncData/EukaryoteGo/split.pt')
+
+    masks = torch.load(file_path)
+    train_idx = masks["train_mask"]
+    train_mask = torch.zeros(num_samples, dtype=torch.bool)
+    train_mask[train_idx] = True
+
+    val_idx = masks["val_mask"]
+    val_mask = torch.zeros(num_samples, dtype=torch.bool)
+    val_mask[val_idx] = True
+
+    test_idx = masks["test_mask"]
+    test_mask = torch.zeros(num_samples, dtype=torch.bool)
+    test_mask[test_idx] = True
+    return train_mask, val_mask, test_mask

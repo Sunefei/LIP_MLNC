@@ -1,0 +1,28 @@
+#nnictl create --config ./.yaml -p 8087
+#nnictl stop --all
+authorName: yifei
+experimentName: euk
+trialConcurrency: 5
+maxExecDuration: 1000h
+maxTrialNum: 99999
+#choice: local, remote, pai
+trainingServicePlatform: local
+# searchSpacePath: sp.json
+searchSpacePath: para.json
+#choice: true, false
+useAnnotation: false
+tuner:
+  #choice: TPE, Random, Anneal, Evolution, BatchTuner, MetisTuner, GPTuner
+  #SMAC (SMAC should be installed through nnictl)
+  builtinTunerName: TPE
+  classArgs:
+    #choice: maximize, minimize
+    optimize_mode: maximize
+trial:
+  command: python /data/syf/LIP_MLNC/main_nni.py --dataset EukLoc
+  codeDir: .
+  gpuNum: 1
+localConfig:
+  gpuIndices: 0,1,2
+  maxTrialNumPerGpu: 1
+  useActiveGpu: true
