@@ -11,7 +11,7 @@ Building on these insights, we propose a novel model, Label Influence Propagatio
 Finally, our framework is evaluated on comprehensive benchmark datasets, consistently outperforming SOTA methods across various settings, demonstrating its effectiveness on MLNC tasks.
 
 ## Model Framework
-<p align="center"><img src="Figs/LIP_iclr_1.pdf" alt="logo" width="800px" /></p>
+<p align="center"><img src="Figs/Github.png" alt="logo" width="800px" /></p>
 
 
 ## Directory Structure
