@@ -1,7 +1,7 @@
 # Multi-Label Node Classification with Label Influence Propagation
 
 ## Label Influence Propagation (LIP)
-This is the code for the ICLR 2025 paper: ["Multi-Label Node Classification on Graphs with Label Influence Propagation"](https://openreview.net/forum?id=3X3LuwzZrl&referrer=%5BAuthor%20Console%5D(%2Fgroup%3Fid%3DICLR.cc%2F2025%2FConference%2FAuthors%23your-submissions)).
+This is the code for the ICLR 2025 paper: ["Multi-Label Node Classification on Graphs with Label Influence Propagation"](https://openreview.net/pdf?id=3X3LuwzZrl).
 
 
 ## Abstract
